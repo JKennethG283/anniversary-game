@@ -1,0 +1,14 @@
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+
+# Cursor / agent tooling
+.agents/
+.codex/
+
+# Video editing projects (not part of the deployed site)
+Untitled video_*/
+*.clipchamp
+
+# Node
+node_modules/
