@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Janice's Anniversary Treasure Book</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main id="app" class="app" aria-live="polite">
+      <section id="coverScreen" class="screen cover-screen is-active">
+        <video id="coverVideo" class="cover-video" src="Open part.mp4" preload="auto" playsinline muted></video>
+        <button id="bookClickBox" class="book-click-box" type="button" aria-label="Open the book"></button>
+        <p id="coverHint" class="cover-hint">Tap the book to open our map.</p>
+      </section>
+
+      <section id="mapScreen" class="screen map-screen" aria-hidden="true">
+        <div class="map-board">
+          <div class="map-art" aria-hidden="true"></div>
+          <header class="map-header">
+            <p class="small-label">Anniversary route</p>
+            <h1>Three memories to the treasure</h1>
+          </header>
+
+          <div class="map-path" aria-label="Level selection map">
+            <svg class="map-route" aria-hidden="true">
+              <path data-route="1"></path>
+              <path data-route="2"></path>
+              <path data-route="3"></path>
+            </svg>
+            <button class="map-node level-one unlocked" type="button" data-level="1">
+              <span class="node-number">1</span>
+              <span class="node-title">Run</span>
+            </button>
+            <button class="map-node level-two locked" type="button" data-level="2">
+              <span class="node-number">2</span>
+              <span class="node-title">Catch</span>
+            </button>
+            <button class="map-node level-three locked" type="button" data-level="3">
+              <span class="node-number">3</span>
+              <span class="node-title">Dodge</span>
+            </button>
+            <button id="chestNode" class="chest-node locked" type="button" aria-label="Open the treasure chest">
+              <span class="chest-lid"></span>
+              <span class="chest-body"></span>
+              <span class="chest-lock"></span>
+            </button>
+          </div>
+
+          <aside id="mapCard" class="map-card">
+            <p class="small-label">Choose a level</p>
+            <h2>Start at the glowing stop.</h2>
+            <p>Each memory unlocks the next path marker and saves a polaroid for the treasure trail.</p>
+          </aside>
+
+          <section class="gallery-section" aria-labelledby="galleryTitle">
+            <div class="gallery-header">
+              <div>
+                <p class="small-label">Saved memories</p>
+                <h2 id="galleryTitle">Gallery</h2>
+              </div>
+              <p id="galleryCount" class="gallery-count">0 saved</p>
+            </div>
+            <div id="galleryItems" class="gallery-items" aria-live="polite">
+              <p class="gallery-empty">Beat a level to pin its polaroid here.</p>
+            </div>
+          </section>
+
+          <button id="closeBook" class="close-book" type="button">Close Book</button>
+        </div>
+      </section>
+
+      <section id="levelScreen" class="screen level-screen" aria-hidden="true">
+        <div class="level-shell">
+          <header class="level-header">
+            <div class="level-actions">
+              <button id="backToMap" class="quiet-button" type="button">Map</button>
+              <button id="skipLevel" class="quiet-button skip-button" type="button">Skip</button>
+            </div>
+            <div>
+              <p id="levelKicker" class="small-label">Level</p>
+              <h2 id="levelTitle">Memory</h2>
+            </div>
+            <p id="levelStatus" class="level-status">Ready</p>
+          </header>
+          <div id="gameArea" class="game-area"></div>
+        </div>
+      </section>
+    </main>
+
+    <div id="transitionCurtain" class="transition-curtain" aria-hidden="true"></div>
+
+    <div id="rewardOverlay" class="overlay reward-overlay" aria-hidden="true">
+      <article class="reward-card">
+        <p id="rewardKicker" class="small-label">Memory complete</p>
+        <img id="rewardImage" class="reward-image" src="" alt="" />
+        <h2 id="rewardTitle">Polaroid unlocked</h2>
+        <p id="rewardBody"></p>
+        <button id="rewardContinue" class="primary-button" type="button">Continue</button>
+      </article>
+    </div>
+
+    <div id="lockOverlay" class="overlay lock-overlay" aria-hidden="true">
+      <article class="lock-card" role="dialog" aria-modal="true" aria-labelledby="lockTitle">
+        <button id="lockClose" class="round-button" type="button" aria-label="Close code prompt">X</button>
+        <p class="small-label">Treasure lock</p>
+        <h2 id="lockTitle">Enter the anniversary code</h2>
+        <form id="lockForm" class="lock-form">
+          <input id="codeInput" class="code-input" type="text" inputmode="numeric" maxlength="4" pattern="[0-9]{4}" autocomplete="off" aria-label="Four digit code" />
+          <button class="primary-button" type="submit">Unlock</button>
+        </form>
+        <p id="lockMessage" class="lock-message">Hint: DD/MM.</p>
+      </article>
+    </div>
+
+    <div id="endingOverlay" class="overlay ending-overlay" aria-hidden="true">
+      <article class="ending-card">
+        <video class="ending-photo ending-video" src="Treasure video.mp4" autoplay loop muted playsinline controls aria-label="Treasure video"></video>
+        <div class="ending-letter">
+          <p class="small-label">The treasure</p>
+          <h2>Dear Janice</h2>
+          <p>
+            Happy anniversary. I made this little book so that we could relive our memories together.
+            I want you to know how much you mean to me, and I can’t wait to make even more memories with you.
+          </p>
+          <p>
+            The real treasure has always been you, 
+            and every version of life feels brighter because I get to share it with you.
+          </p>
+          <button id="endingCloseBook" class="primary-button" type="button">Close</button>
+        </div>
+      </article>
+    </div>
+
+    <script src="game.js"></script>
+  </body>
+</html>
