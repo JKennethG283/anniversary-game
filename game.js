@@ -67,6 +67,21 @@ const levelData = [
 ];
 
 const galleryTilts = ["-3deg", "2deg", "-1deg"];
+const PRELOAD_IMAGES = [
+  "Game design 1.png",
+  "5 Year old me.png",
+  "5 Year old Janice.png",
+  "Pomeranian.png",
+  "12 Year Old me.png",
+  "Akita.png",
+  "20 year old me with jan.png",
+  "Level 3 design enviroment.jpg",
+  "Level 1 polaroid.png",
+  "Level 2 polaroid.png",
+  "Level 3 polaroid.png"
+];
+
+PRELOAD_IMAGES.forEach(preloadImage);
 
 const state = {
   unlocked: 1,
@@ -496,8 +511,59 @@ function rectsOverlap(a, b, padding = 0) {
   );
 }
 
+function preloadImage(src) {
+  const image = new Image();
+  image.decoding = "async";
+  image.src = src;
+  if (image.decode) image.decode().catch(() => {});
+  return image;
+}
+
+function setText(element, value) {
+  if (element && element.textContent !== value) {
+    element.textContent = value;
+  }
+}
+
+function setSpritePosition(element, x, y = 0) {
+  element.style.setProperty("--sprite-x", `${x}px`);
+  element.style.setProperty("--sprite-y", `${y}px`);
+}
+
+function spriteSize(element, fallbackWidth, fallbackHeight) {
+  return {
+    width: element.offsetWidth || fallbackWidth,
+    height: element.offsetHeight || fallbackHeight
+  };
+}
+
+function rectFromBottom(sceneSize, left, bottomRatio, width, height, lift = 0) {
+  const bottom = sceneSize.height - sceneSize.height * bottomRatio - lift;
+  return {
+    left,
+    right: left + width,
+    top: bottom - height,
+    bottom,
+    width,
+    height
+  };
+}
+
+function centeredRect(x, y, width, height) {
+  return {
+    left: x - width / 2,
+    right: x + width / 2,
+    top: y - height / 2,
+    bottom: y + height / 2,
+    width,
+    height
+  };
+}
+
 function createSprite(src, className, alt) {
   const image = document.createElement("img");
+  image.decoding = "async";
+  image.loading = "eager";
   image.src = src;
   image.className = className;
   image.alt = alt;
@@ -510,7 +576,7 @@ function draggableFalse(element) {
 }
 
 function createRunnerGame() {
-  levelStatus.textContent = "Distance: 0 / 700";
+  setText(levelStatus, "Distance: 0 / 700");
   gameArea.innerHTML = `
     <div class="runner-scene game-scene">
       <div class="runner-bg bg-far"></div>
@@ -529,14 +595,28 @@ function createRunnerGame() {
   const player = gameArea.querySelector(".runner-player");
   const distanceEl = gameArea.querySelector("[data-distance]");
   const obstacles = [];
+  let sceneSize = {
+    width: scene.clientWidth || gameArea.clientWidth || window.innerWidth,
+    height: scene.clientHeight || gameArea.clientHeight || window.innerHeight
+  };
+  let playerSize = spriteSize(player, 220, 220);
   let distance = 0;
   let y = 0;
   let velocity = 0;
   let isJumping = false;
   let spawnTimer = 0.95;
+  let lastHudDistance = -1;
   let last = performance.now();
   let stopped = false;
   let raf = 0;
+
+  function measureScene() {
+    sceneSize = {
+      width: scene.clientWidth || gameArea.clientWidth || sceneSize.width,
+      height: scene.clientHeight || gameArea.clientHeight || sceneSize.height
+    };
+    playerSize = spriteSize(player, playerSize.width || 220, playerSize.height || 220);
+  }
 
   function jump() {
     if (stopped || isJumping) return;
@@ -548,7 +628,17 @@ function createRunnerGame() {
   function spawnObstacle() {
     const obstacle = createSprite("Pomeranian.png", "runner-obstacle", "Pomeranian obstacle");
     scene.append(obstacle);
-    obstacles.push({ el: obstacle, x: scene.clientWidth + 80, speed: 430 + Math.random() * 90 });
+    const obstacleData = {
+      el: obstacle,
+      x: sceneSize.width + 80,
+      speed: 430 + Math.random() * 90,
+      ...spriteSize(obstacle, 96, 76)
+    };
+    setSpritePosition(obstacle, obstacleData.x);
+    obstacle.addEventListener("load", () => {
+      Object.assign(obstacleData, spriteSize(obstacle, obstacleData.width, obstacleData.height));
+    }, { once: true });
+    obstacles.push(obstacleData);
   }
 
   function onKey(event) {
@@ -581,8 +671,11 @@ function createRunnerGame() {
     last = now;
     distance += 42 * dt;
     const visibleDistance = Math.min(700, Math.floor(distance));
-    distanceEl.textContent = `${visibleDistance} / 700`;
-    levelStatus.textContent = `Distance: ${visibleDistance} / 700`;
+    if (visibleDistance !== lastHudDistance) {
+      setText(distanceEl, `${visibleDistance} / 700`);
+      setText(levelStatus, `Distance: ${visibleDistance} / 700`);
+      lastHudDistance = visibleDistance;
+    }
 
     if (isJumping) {
       y += velocity * dt;
@@ -593,7 +686,7 @@ function createRunnerGame() {
         isJumping = false;
         player.classList.remove("is-jumping");
       }
-      player.style.setProperty("--jump-y", `${y}px`);
+      player.style.setProperty("--jump-y", `${-y}px`);
     }
 
     spawnTimer -= dt;
@@ -605,17 +698,18 @@ function createRunnerGame() {
     for (let index = obstacles.length - 1; index >= 0; index -= 1) {
       const obstacle = obstacles[index];
       obstacle.x -= obstacle.speed * dt;
-      obstacle.el.style.left = `${obstacle.x}px`;
-      if (obstacle.x < -120) {
+      setSpritePosition(obstacle.el, obstacle.x);
+      if (obstacle.x < -obstacle.width - 24) {
         obstacle.el.remove();
         obstacles.splice(index, 1);
       } else {
-        const playerRect = player.getBoundingClientRect();
+        const playerRect = rectFromBottom(sceneSize, sceneSize.width * 0.22, 0.15, playerSize.width, playerSize.height, y);
+        const obstacleRect = rectFromBottom(sceneSize, obstacle.x, 0.15, obstacle.width, obstacle.height);
         const hitboxInset = {
           x: playerRect.width * 0.38,
           y: playerRect.height * 0.22
         };
-        if (!rectsOverlap(playerRect, obstacle.el.getBoundingClientRect(), hitboxInset)) continue;
+        if (!rectsOverlap(playerRect, obstacleRect, hitboxInset)) continue;
         lose();
         return;
       }
@@ -629,6 +723,9 @@ function createRunnerGame() {
     raf = requestAnimationFrame(loop);
   }
 
+  measureScene();
+  player.addEventListener("load", measureScene, { once: true });
+  window.addEventListener("resize", measureScene);
   window.addEventListener("keydown", onKey);
   gameArea.addEventListener("pointerdown", jump);
   raf = requestAnimationFrame(loop);
@@ -637,6 +734,7 @@ function createRunnerGame() {
     stop() {
       stopped = true;
       cancelAnimationFrame(raf);
+      window.removeEventListener("resize", measureScene);
       window.removeEventListener("keydown", onKey);
       gameArea.removeEventListener("pointerdown", jump);
     }
@@ -769,7 +867,7 @@ function createWhackGame() {
 }
 
 function createDodgeGame() {
-  levelStatus.textContent = "Survive 30s";
+  setText(levelStatus, "Survive 30s");
   gameArea.innerHTML = `
     <div class="dodge-scene game-scene">
       <div class="hud">
@@ -786,28 +884,58 @@ function createDodgeGame() {
   const keys = new Set();
   const hazards = [];
   let position = { x: 50, y: 78 };
+  let sceneRect = scene.getBoundingClientRect();
+  let sceneSize = {
+    width: sceneRect.width || scene.clientWidth || gameArea.clientWidth || window.innerWidth,
+    height: sceneRect.height || scene.clientHeight || gameArea.clientHeight || window.innerHeight
+  };
+  let playerSize = spriteSize(player, 140, 110);
   let elapsed = 0;
   let spawnTimer = 0.5;
+  let lastTimerText = "";
   let last = performance.now();
   let stopped = false;
   let raf = 0;
 
+  function measureScene() {
+    sceneRect = scene.getBoundingClientRect();
+    sceneSize = {
+      width: sceneRect.width || scene.clientWidth || gameArea.clientWidth || sceneSize.width,
+      height: sceneRect.height || scene.clientHeight || gameArea.clientHeight || sceneSize.height
+    };
+    playerSize = spriteSize(player, playerSize.width || 140, playerSize.height || 110);
+    renderPlayer();
+  }
+
+  function playerCenter() {
+    return {
+      x: (position.x / 100) * sceneSize.width,
+      y: (position.y / 100) * sceneSize.height
+    };
+  }
+
   function renderPlayer() {
-    player.style.left = `${position.x}%`;
-    player.style.top = `${position.y}%`;
+    const center = playerCenter();
+    setSpritePosition(player, center.x, center.y);
   }
 
   function spawnHazard() {
     const isPom = Math.random() > 0.5;
     const hazard = createSprite(isPom ? "Pomeranian.png" : "Akita.png", "hazard", isPom ? "Pomeranian hazard" : "Akita hazard");
     scene.append(hazard);
-    hazards.push({
+    const hazardData = {
       el: hazard,
-      x: 8 + Math.random() * 84,
-      y: -14,
-      vx: -18 + Math.random() * 36,
-      speed: 26 + Math.random() * 22
-    });
+      x: (8 + Math.random() * 84) / 100 * sceneSize.width,
+      y: -0.14 * sceneSize.height,
+      vx: (-18 + Math.random() * 36) / 100 * sceneSize.width,
+      speed: (26 + Math.random() * 22) / 100 * sceneSize.height,
+      ...spriteSize(hazard, isPom ? 84 : 92, isPom ? 72 : 82)
+    };
+    setSpritePosition(hazard, hazardData.x, hazardData.y);
+    hazard.addEventListener("load", () => {
+      Object.assign(hazardData, spriteSize(hazard, hazardData.width, hazardData.height));
+    }, { once: true });
+    hazards.push(hazardData);
   }
 
   function onKeyDown(event) {
@@ -823,9 +951,9 @@ function createDodgeGame() {
 
   function moveToPointer(event) {
     const pointer = event.touches ? event.touches[0] : event;
-    const rect = scene.getBoundingClientRect();
-    position.x = ((pointer.clientX - rect.left) / rect.width) * 100;
-    position.y = ((pointer.clientY - rect.top) / rect.height) * 100;
+    if (!sceneRect.width || !sceneRect.height) measureScene();
+    position.x = ((pointer.clientX - sceneRect.left) / sceneRect.width) * 100;
+    position.y = ((pointer.clientY - sceneRect.top) / sceneRect.height) * 100;
     position.x = Math.max(8, Math.min(92, position.x));
     position.y = Math.max(22, Math.min(88, position.y));
     renderPlayer();
@@ -854,8 +982,12 @@ function createDodgeGame() {
     last = now;
     elapsed += dt;
     const remaining = Math.max(0, 30 - elapsed);
-    surviveEl.textContent = `${remaining.toFixed(1)}s`;
-    levelStatus.textContent = `Survive ${remaining.toFixed(1)}s`;
+    const timerText = `${remaining.toFixed(1)}s`;
+    if (timerText !== lastTimerText) {
+      setText(surviveEl, timerText);
+      setText(levelStatus, `Survive ${timerText}`);
+      lastTimerText = timerText;
+    }
 
     const speed = 48 * dt;
     if (keys.has("arrowleft") || keys.has("a")) position.x -= speed;
@@ -876,20 +1008,21 @@ function createDodgeGame() {
       const hazard = hazards[index];
       hazard.y += hazard.speed * dt;
       hazard.x += hazard.vx * dt;
-      hazard.el.style.left = `${hazard.x}%`;
-      hazard.el.style.top = `${hazard.y}%`;
-      hazard.el.style.transform = `translate(-50%, -50%) rotate(${hazard.y * 2.2}deg)`;
+      setSpritePosition(hazard.el, hazard.x, hazard.y);
+      hazard.el.style.setProperty("--sprite-rotation", `${(hazard.y / sceneSize.height) * 220}deg`);
 
-      if (hazard.y > 112 || hazard.x < -10 || hazard.x > 110) {
+      if (hazard.y > sceneSize.height + hazard.height || hazard.x < -hazard.width || hazard.x > sceneSize.width + hazard.width) {
         hazard.el.remove();
         hazards.splice(index, 1);
       } else {
-        const playerRect = player.getBoundingClientRect();
+        const center = playerCenter();
+        const playerRect = centeredRect(center.x, center.y, playerSize.width, playerSize.height);
+        const hazardRect = centeredRect(hazard.x, hazard.y, hazard.width, hazard.height);
         const hitboxInset = {
           x: playerRect.width * 0.3,
           y: playerRect.height * 0.24
         };
-        if (!rectsOverlap(playerRect, hazard.el.getBoundingClientRect(), hitboxInset)) continue;
+        if (!rectsOverlap(playerRect, hazardRect, hitboxInset)) continue;
         lose();
         return;
       }
@@ -903,7 +1036,9 @@ function createDodgeGame() {
     raf = requestAnimationFrame(loop);
   }
 
-  renderPlayer();
+  measureScene();
+  player.addEventListener("load", measureScene, { once: true });
+  window.addEventListener("resize", measureScene);
   window.addEventListener("keydown", onKeyDown);
   window.addEventListener("keyup", onKeyUp);
   scene.addEventListener("pointermove", moveToPointer);
@@ -917,6 +1052,7 @@ function createDodgeGame() {
       cancelAnimationFrame(raf);
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("keyup", onKeyUp);
+      window.removeEventListener("resize", measureScene);
       scene.removeEventListener("pointermove", moveToPointer);
       scene.removeEventListener("pointerdown", moveToPointer);
       scene.removeEventListener("touchmove", moveToPointer);

@@ -798,18 +798,21 @@ h1 {
   object-fit: contain;
   filter: drop-shadow(0 10px 12px rgba(35, 20, 16, 0.24));
   user-select: none;
+  will-change: transform;
 }
 
 .runner-player {
   left: 22%;
-  bottom: calc(15% + var(--jump-y, 0px));
+  bottom: 15%;
   width: clamp(184px, 26vw, 316px);
   max-height: 68%;
+  transform: translate3d(0, var(--jump-y, 0px), 0);
   animation: runBob 360ms ease-in-out infinite;
 }
 
 .runner-player.is-jumping {
   animation: none;
+  transform: translate3d(0, var(--jump-y, 0px), 0);
 }
 
 .runner-chaser {
@@ -821,10 +824,11 @@ h1 {
 }
 
 .runner-obstacle {
-  left: 100%;
+  left: 0;
   bottom: 15%;
   width: clamp(76px, 9vw, 112px);
   max-height: 24%;
+  transform: translate3d(var(--sprite-x, 100vw), 0, 0);
   animation: hazardPulse 500ms ease-in-out infinite;
 }
 
@@ -899,22 +903,29 @@ h1 {
 .dodge-player,
 .hazard {
   position: absolute;
+  left: 0;
+  top: 0;
   z-index: 3;
   object-fit: contain;
   user-select: none;
   filter: drop-shadow(0 12px 14px rgba(12, 10, 18, 0.28));
+  will-change: transform;
 }
 
 .dodge-player {
   width: clamp(104px, 15vw, 176px);
   max-height: 34%;
-  transform: translate(-50%, -50%);
-  transition: left 70ms linear, top 70ms linear;
+  transform: translate3d(var(--sprite-x, 50vw), var(--sprite-y, 78vh), 0) translate(-50%, -50%);
 }
 
 .hazard {
   width: clamp(66px, 8vw, 104px);
   max-height: 18%;
+  transform: translate3d(var(--sprite-x, 0px), var(--sprite-y, 0px), 0) translate(-50%, -50%) rotate(var(--sprite-rotation, 0deg));
+}
+
+.dodge-player.is-hit {
+  animation: dodgeHitShake 360ms ease both !important;
 }
 
 .overlay {
@@ -1083,8 +1094,8 @@ h1 {
 }
 
 @keyframes runBob {
-  0%, 100% { transform: translateY(0) rotate(-1deg); }
-  50% { transform: translateY(-8px) rotate(2deg); }
+  0%, 100% { transform: translate3d(0, var(--jump-y, 0px), 0) rotate(-1deg); }
+  50% { transform: translate3d(0, calc(var(--jump-y, 0px) - 8px), 0) rotate(2deg); }
 }
 
 @keyframes chaseBob {
@@ -1093,8 +1104,8 @@ h1 {
 }
 
 @keyframes hazardPulse {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+  0%, 100% { transform: translate3d(var(--sprite-x, 100vw), 0, 0); }
+  50% { transform: translate3d(var(--sprite-x, 100vw), -5px, 0); }
 }
 
 @keyframes hitShake {
@@ -1103,6 +1114,14 @@ h1 {
   40% { transform: translateX(12px) rotate(3deg); }
   60% { transform: translateX(-8px) rotate(-2deg); }
   80% { transform: translateX(8px) rotate(2deg); }
+}
+
+@keyframes dodgeHitShake {
+  0%, 100% { transform: translate3d(var(--sprite-x, 0px), var(--sprite-y, 0px), 0) translate(-50%, -50%) translateX(0); }
+  20% { transform: translate3d(var(--sprite-x, 0px), var(--sprite-y, 0px), 0) translate(-50%, -50%) translateX(-14px) rotate(-3deg); }
+  40% { transform: translate3d(var(--sprite-x, 0px), var(--sprite-y, 0px), 0) translate(-50%, -50%) translateX(12px) rotate(3deg); }
+  60% { transform: translate3d(var(--sprite-x, 0px), var(--sprite-y, 0px), 0) translate(-50%, -50%) translateX(-8px) rotate(-2deg); }
+  80% { transform: translate3d(var(--sprite-x, 0px), var(--sprite-y, 0px), 0) translate(-50%, -50%) translateX(8px) rotate(2deg); }
 }
 
 @keyframes popUp {
