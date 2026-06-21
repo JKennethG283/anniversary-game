@@ -71,7 +71,7 @@ button {
 .cover-screen {
   display: grid;
   place-items: center;
-  background: #0d0a0d;
+  background: #0d0a0d url("Cover game 3.8s frame.jpg") center / cover no-repeat;
 }
 
 .cover-video {
