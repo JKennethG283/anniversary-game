@@ -1,5 +1,5 @@
-const OPEN_VIDEO_SRC = "Open part.mp4";
-const CLOSE_VIDEO_SRC = "Closing part.mp4";
+const OPEN_VIDEO_SRC = "assets/videos/open.mp4";
+const CLOSE_VIDEO_SRC = "assets/videos/closing.mp4";
 const ANNIVERSARY_CODE = "0307";
 
 const screens = {
@@ -48,37 +48,37 @@ const levelData = [
     title: "Janice's on a run",
     kicker: "Level 1",
     mapBody: "Help 5-year-old Janice jump over Monmon while kenneth keeps chasing from behind.",
-    reward: "Level 1 polaroid.png"
+    reward: "assets/images/level-1-polaroid.png"
   },
   {
     id: 2,
     title: "Whack-a-Me",
     kicker: "Level 2",
     mapBody: "Catch 12-year-old kenneth six times in 30 seconds, but leave the Hachi alone.",
-    reward: "Level 2 polaroid.png"
+    reward: "assets/images/level-2-polaroid.png"
   },
   {
     id: 3,
     title: "Doggo Dodgers",
     kicker: "Level 3",
     mapBody: "Move us around the page and survive 30 seconds while Monmon and Hachi fly in.",
-    reward: "Level 3 polaroid.png"
+    reward: "assets/images/level-3-polaroid.png"
   }
 ];
 
 const galleryTilts = ["-3deg", "2deg", "-1deg"];
 const PRELOAD_IMAGES = [
-  "Game design 1.png",
-  "5 Year old me.png",
-  "5 Year old Janice.png",
-  "Pomeranian.png",
-  "12 Year Old me.png",
-  "Akita.png",
-  "20 year old me with jan.png",
-  "Level 3 design enviroment.jpg",
-  "Level 1 polaroid.png",
-  "Level 2 polaroid.png",
-  "Level 3 polaroid.png"
+  "assets/images/game-design-1.png",
+  "assets/images/5-year-old-me.png",
+  "assets/images/5-year-old-janice.png",
+  "assets/images/pomeranian.png",
+  "assets/images/12-year-old-me.png",
+  "assets/images/akita.png",
+  "assets/images/20-year-old-me-with-janice.png",
+  "assets/images/level-3-environment.jpg",
+  "assets/images/level-1-polaroid.png",
+  "assets/images/level-2-polaroid.png",
+  "assets/images/level-3-polaroid.png"
 ];
 
 PRELOAD_IMAGES.forEach(preloadImage);
@@ -147,7 +147,7 @@ function updateGallery() {
 
   const treasure = state.treasureUnlocked ? `
     <button class="gallery-polaroid gallery-treasure" type="button" data-gallery-treasure="true" aria-label="Open the treasure" style="--tilt: 2.5deg">
-      <video src="Treasure video.mp4" autoplay loop muted playsinline preload="metadata" aria-label="Unlocked treasure video"></video>
+      <video src="assets/videos/treasure.mp4" autoplay loop muted playsinline preload="metadata" aria-label="Unlocked treasure video"></video>
       <span class="gallery-caption">The treasure</span>
     </button>
   ` : "";
@@ -586,8 +586,8 @@ function createRunnerGame() {
         <span class="hud-pill" data-distance>0 / 700</span>
         <span class="hud-pill">Space or tap to jump</span>
       </div>
-      <img class="runner-chaser" src="5 Year old me.png" alt="5 year old me" />
-      <img class="runner-player" src="5 Year old Janice.png" alt="5 year old Janice" />
+      <img class="runner-chaser" src="assets/images/5-year-old-me.png" alt="5 year old me" />
+      <img class="runner-player" src="assets/images/5-year-old-janice.png" alt="5 year old Janice" />
     </div>
   `;
 
@@ -626,7 +626,7 @@ function createRunnerGame() {
   }
 
   function spawnObstacle() {
-    const obstacle = createSprite("Pomeranian.png", "runner-obstacle", "Pomeranian obstacle");
+    const obstacle = createSprite("assets/images/pomeranian.png", "runner-obstacle", "Pomeranian obstacle");
     scene.append(obstacle);
     const obstacleData = {
       el: obstacle,
@@ -790,7 +790,7 @@ function createWhackGame() {
     const isTarget = Math.random() > 0.32;
     button.classList.add("has-popup", isTarget ? "is-target" : "is-penalty");
     const image = createSprite(
-      isTarget ? "12 Year Old me.png" : "Akita.png",
+      isTarget ? "assets/images/12-year-old-me.png" : "assets/images/akita.png",
       "popup-character",
       isTarget ? "12 year old me" : "Akita"
     );
@@ -874,7 +874,7 @@ function createDodgeGame() {
         <span class="hud-pill" data-survive>30.0s</span>
         <span class="hud-pill">Drag, touch, or use arrows</span>
       </div>
-      <img class="dodge-player" src="20 year old me with jan.png" alt="Me with Janice" />
+      <img class="dodge-player" src="assets/images/20-year-old-me-with-janice.png" alt="Me with Janice" />
     </div>
   `;
 
@@ -921,7 +921,7 @@ function createDodgeGame() {
 
   function spawnHazard() {
     const isPom = Math.random() > 0.5;
-    const hazard = createSprite(isPom ? "Pomeranian.png" : "Akita.png", "hazard", isPom ? "Pomeranian hazard" : "Akita hazard");
+    const hazard = createSprite(isPom ? "assets/images/pomeranian.png" : "assets/images/akita.png", "hazard", isPom ? "Pomeranian hazard" : "Akita hazard");
     scene.append(hazard);
     const hazardData = {
       el: hazard,

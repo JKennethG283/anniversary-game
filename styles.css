@@ -71,7 +71,7 @@ button {
 .cover-screen {
   display: grid;
   place-items: center;
-  background: #0d0a0d url("Cover game 3.8s frame.jpg") center / cover no-repeat;
+  background: #0d0a0d url("assets/images/cover-frame.jpg") center / cover no-repeat;
 }
 
 .cover-video {
@@ -213,7 +213,7 @@ button {
   opacity: 0.12;
   background:
     linear-gradient(rgba(255, 229, 184, 0.28), rgba(255, 229, 184, 0.28)),
-    url("Map reference.jpg") center / cover;
+    url("assets/images/map-reference.jpg") center / cover;
   mix-blend-mode: multiply;
   pointer-events: none;
 }
@@ -764,7 +764,7 @@ h1 {
 .runner-bg {
   position: absolute;
   inset: 0;
-  background-image: url("Game design 1.png");
+  background-image: url("assets/images/game-design-1.png");
   background-repeat: repeat-x;
   background-size: auto 100%;
   background-position: 0 center;
@@ -897,7 +897,7 @@ h1 {
 .dodge-scene {
   background:
     linear-gradient(rgba(23, 22, 37, 0.12), rgba(23, 22, 37, 0.3)),
-    url("Level 3 design enviroment.jpg") center / cover;
+    url("assets/images/level-3-environment.jpg") center / cover;
 }
 
 .dodge-player,
