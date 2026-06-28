@@ -726,7 +726,7 @@ h1 {
 }
 
 .level-shell {
-  width: min(1180px, 98vw);
+  width: min(1180px, 100%);
   height: min(780px, calc(100vh - 24px));
   height: min(780px, calc(var(--app-height) - 24px));
   min-height: 0;
