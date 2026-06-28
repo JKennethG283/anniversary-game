@@ -2,7 +2,7 @@
 
 A small browser game made as an anniversary gift — an interactive "treasure book" where you play through three little memory-themed mini-games to unlock a final surprise.
 
-🔗 **Live site:** https://anniversary-game-six.vercel.app/
+🔗 **Live site:** https://anniversary-game-eight.vercel.app/
 
 ## How to play
 
