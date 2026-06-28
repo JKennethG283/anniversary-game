@@ -14,6 +14,11 @@ const bookClickBox = document.getElementById("bookClickBox");
 const coverHint = document.getElementById("coverHint");
 const transitionCurtain = document.getElementById("transitionCurtain");
 const mapCard = document.getElementById("mapCard");
+const mapBoard = document.getElementById("mapBoard");
+const galleryToggle = document.getElementById("galleryToggle");
+const galleryToggleCount = document.getElementById("galleryToggleCount");
+const galleryToggleLabel = document.querySelector(".gallery-toggle-label");
+const galleryPanel = document.getElementById("galleryPanel");
 const galleryItems = document.getElementById("galleryItems");
 const galleryCount = document.getElementById("galleryCount");
 const mapPath = document.querySelector(".map-path");
@@ -94,6 +99,7 @@ const state = {
 
 let currentGame = null;
 let rewardAction = null;
+let rewardDismissesOnBackdrop = false;
 
 function showScreen(name) {
   Object.entries(screens).forEach(([screenName, element]) => {
@@ -131,10 +137,16 @@ function updateGallery() {
 
   const completedLevels = levelData.filter((level) => state.completed.has(level.id));
   const itemCount = completedLevels.length + (state.treasureUnlocked ? 1 : 0);
-  galleryCount.textContent = `${itemCount} saved`;
+  const countLabel = `${itemCount} saved`;
+  galleryCount.textContent = countLabel;
+  if (galleryToggleCount) galleryToggleCount.textContent = countLabel;
+  if (mapBoard) mapBoard.classList.toggle("has-gallery-items", itemCount > 0);
 
   if (!itemCount) {
     galleryItems.innerHTML = `<p class="gallery-empty">Beat a level to pin its polaroid here.</p>`;
+    if (isMobileMapLayout() && mapBoard?.classList.contains("is-gallery-open")) {
+      setGalleryOpen(false);
+    }
     return;
   }
 
@@ -264,6 +276,7 @@ function completeLevel(id) {
   updateMap();
   selectLevel(state.selectedLevel);
   showScreen("map");
+  if (isMobileMapLayout()) setGalleryOpen(true);
 }
 
 function setCoverTime(seconds) {
@@ -426,6 +439,7 @@ function showReward(levelId) {
   rewardTitle.textContent = `Level ${levelId} polaroid unlocked`;
   rewardBody.textContent = getRewardBody(levelId);
   rewardContinue.textContent = "Continue";
+  rewardDismissesOnBackdrop = false;
   rewardAction = () => {
     hideOverlay(rewardOverlay);
     completeLevel(levelId);
@@ -445,6 +459,7 @@ function showGalleryReward(levelId) {
   rewardTitle.textContent = `Level ${levelId} polaroid unlocked`;
   rewardBody.textContent = getRewardBody(levelId);
   rewardContinue.textContent = "Close";
+  rewardDismissesOnBackdrop = true;
   rewardAction = () => {
     hideOverlay(rewardOverlay);
     showScreen("map");
@@ -462,6 +477,7 @@ function showFailure(title, body, retry) {
   rewardTitle.textContent = title;
   rewardBody.textContent = body;
   rewardContinue.textContent = "Retry";
+  rewardDismissesOnBackdrop = false;
   rewardAction = () => {
     hideOverlay(rewardOverlay);
     retry();
@@ -1082,6 +1098,21 @@ function openChest() {
   setTimeout(() => codeInput.focus(), 80);
 }
 
+function setGalleryOpen(open) {
+  if (!mapBoard || !galleryToggle) return;
+  if (open && isMobileMapLayout() && !mapBoard.classList.contains("has-gallery-items")) return;
+  mapBoard.classList.toggle("is-gallery-open", open);
+  galleryToggle.setAttribute("aria-expanded", String(open));
+  if (galleryToggleLabel) {
+    galleryToggleLabel.textContent = open ? "Hide gallery" : "Gallery";
+  }
+  requestAnimationFrame(updateMapRoute);
+}
+
+function isMobileMapLayout() {
+  return window.matchMedia("(max-width: 820px), (orientation: landscape) and (max-height: 520px)").matches;
+}
+
 bookClickBox.addEventListener("click", openBookSequence);
 closeBook.addEventListener("click", closeBookSequence);
 endingCloseBook.addEventListener("click", () => {
@@ -1106,6 +1137,12 @@ mapNodes.forEach((node) => {
 
 chestNode.addEventListener("click", openChest);
 
+if (galleryToggle) {
+  galleryToggle.addEventListener("click", () => {
+    setGalleryOpen(!mapBoard.classList.contains("is-gallery-open"));
+  });
+}
+
 galleryItems.addEventListener("click", (event) => {
   const item = event.target.closest("[data-gallery-level], [data-gallery-treasure]");
   if (!item) return;
@@ -1121,6 +1158,11 @@ galleryItems.addEventListener("click", (event) => {
 });
 
 rewardContinue.addEventListener("click", () => {
+  if (rewardAction) rewardAction();
+});
+
+rewardOverlay.addEventListener("click", (event) => {
+  if (event.target !== rewardOverlay || !rewardDismissesOnBackdrop) return;
   if (rewardAction) rewardAction();
 });
 
@@ -1144,7 +1186,12 @@ codeInput.addEventListener("input", () => {
   codeInput.value = codeInput.value.replace(/\D/g, "").slice(0, 4);
 });
 
-window.addEventListener("resize", () => requestAnimationFrame(updateMapRoute));
+window.addEventListener("resize", () => {
+  if (!isMobileMapLayout() && mapBoard?.classList.contains("is-gallery-open")) {
+    setGalleryOpen(false);
+  }
+  requestAnimationFrame(updateMapRoute);
+});
 
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape") {

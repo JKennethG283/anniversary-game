@@ -16,7 +16,7 @@
       </section>
 
       <section id="mapScreen" class="screen map-screen" aria-hidden="true">
-        <div class="map-board">
+        <div id="mapBoard" class="map-board">
           <div class="map-art" aria-hidden="true"></div>
           <header class="map-header">
             <p class="small-label">Anniversary route</p>
@@ -54,7 +54,12 @@
             <p>Each memory unlocks the next path marker and saves a polaroid for the treasure trail.</p>
           </aside>
 
-          <section class="gallery-section" aria-labelledby="galleryTitle">
+          <button id="galleryToggle" class="gallery-toggle quiet-button" type="button" aria-expanded="false" aria-controls="galleryPanel">
+            <span class="gallery-toggle-label">Gallery</span>
+            <span id="galleryToggleCount" class="gallery-toggle-count">0 saved</span>
+          </button>
+
+          <section id="galleryPanel" class="gallery-section" aria-labelledby="galleryTitle">
             <div class="gallery-header">
               <div>
                 <p class="small-label">Saved memories</p>
