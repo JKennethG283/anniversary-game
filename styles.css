@@ -27,6 +27,8 @@ body {
 body {
   margin: 0;
   overflow: hidden;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
   color: var(--ink);
   background: var(--night);
 }
@@ -45,10 +47,12 @@ input:focus-visible {
 
 button {
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 .app {
   min-height: 100vh;
+  min-height: 100dvh;
   position: relative;
   isolation: isolate;
 }
@@ -71,6 +75,8 @@ button {
 .cover-screen {
   display: grid;
   place-items: center;
+  min-height: 100vh;
+  min-height: 100dvh;
   background: #0d0a0d url("assets/images/cover-frame.jpg") center / cover no-repeat;
 }
 
@@ -114,9 +120,11 @@ button {
 .cover-hint {
   position: absolute;
   left: 50%;
-  bottom: 5%;
+  bottom: max(5%, env(safe-area-inset-bottom));
   z-index: 4;
   transform: translateX(-50%);
+  width: max-content;
+  max-width: calc(100vw - 32px);
   margin: 0;
   padding: 10px 16px;
   border-radius: 999px;
@@ -151,7 +159,11 @@ button {
 .map-screen {
   display: grid;
   place-items: center;
-  padding: clamp(14px, 3vw, 32px);
+  padding:
+    max(clamp(14px, 3vw, 32px), env(safe-area-inset-top))
+    max(clamp(14px, 3vw, 32px), env(safe-area-inset-right))
+    max(clamp(14px, 3vw, 32px), env(safe-area-inset-bottom))
+    max(clamp(14px, 3vw, 32px), env(safe-area-inset-left));
   background:
     radial-gradient(circle at 48% 40%, rgba(255, 217, 139, 0.22), transparent 34%),
     radial-gradient(circle at 16% 82%, rgba(104, 60, 36, 0.32), transparent 28%),
@@ -161,7 +173,9 @@ button {
 .map-board {
   position: relative;
   width: min(1120px, 96vw);
-  min-height: min(760px, 94vh);
+  height: min(760px, calc(100vh - 28px));
+  height: min(760px, calc(100dvh - 28px));
+  min-height: 560px;
   overflow: hidden;
   border-radius: 18px;
   background:
@@ -442,6 +456,10 @@ h1 {
   line-height: 1.45;
 }
 
+.map-card .primary-button {
+  margin-top: 2px;
+}
+
 .gallery-section {
   position: absolute;
   left: clamp(26px, 5vw, 70px);
@@ -670,7 +688,11 @@ h1 {
 .level-screen {
   display: grid;
   place-items: center;
-  padding: clamp(12px, 3vw, 28px);
+  padding:
+    max(clamp(12px, 3vw, 28px), env(safe-area-inset-top))
+    max(clamp(12px, 3vw, 28px), env(safe-area-inset-right))
+    max(clamp(12px, 3vw, 28px), env(safe-area-inset-bottom))
+    max(clamp(12px, 3vw, 28px), env(safe-area-inset-left));
   background:
     radial-gradient(circle at 50% 18%, rgba(255, 239, 189, 0.38), transparent 28%),
     linear-gradient(180deg, #e8b766, #c46172);
@@ -678,7 +700,9 @@ h1 {
 
 .level-shell {
   width: min(1180px, 98vw);
-  height: min(780px, 94vh);
+  height: min(780px, calc(100vh - 24px));
+  height: min(780px, calc(100dvh - 24px));
+  min-height: 0;
   display: grid;
   grid-template-rows: auto 1fr;
   gap: 14px;
@@ -729,12 +753,14 @@ h1 {
   min-height: 0;
   background: var(--sky);
   box-shadow: var(--shadow);
+  touch-action: none;
 }
 
 .game-scene {
   position: absolute;
   inset: 0;
   overflow: hidden;
+  touch-action: none;
 }
 
 .hud {
@@ -755,6 +781,7 @@ h1 {
   background: rgba(255, 248, 224, 0.88);
   box-shadow: 0 8px 24px rgba(37, 24, 19, 0.14);
   font-weight: 900;
+  line-height: 1.15;
 }
 
 .runner-scene {
@@ -860,6 +887,7 @@ h1 {
     radial-gradient(ellipse at 50% 60%, #1d1110 0 42%, #5a2f1d 43% 62%, transparent 63%),
     transparent;
   overflow: visible;
+  touch-action: manipulation;
 }
 
 .hole::after {
@@ -934,7 +962,11 @@ h1 {
   z-index: 20;
   display: grid;
   place-items: center;
-  padding: 24px;
+  padding:
+    max(24px, env(safe-area-inset-top))
+    max(24px, env(safe-area-inset-right))
+    max(24px, env(safe-area-inset-bottom))
+    max(24px, env(safe-area-inset-left));
   opacity: 0;
   pointer-events: none;
   transition: opacity 240ms ease;
@@ -1139,45 +1171,88 @@ h1 {
 }
 
 @media (max-width: 760px) {
+  body {
+    min-width: 320px;
+  }
+
   .book-click-box {
-    width: 72vw;
-    height: 72vh;
+    width: min(76vw, 360px);
+    height: min(72vh, 560px);
+    height: min(72dvh, 560px);
+  }
+
+  .cover-hint {
+    bottom: max(18px, env(safe-area-inset-bottom));
+    padding: 9px 13px;
+    font-size: 14px;
+    text-align: center;
+  }
+
+  .map-screen {
+    padding:
+      max(8px, env(safe-area-inset-top))
+      max(8px, env(safe-area-inset-right))
+      max(8px, env(safe-area-inset-bottom))
+      max(8px, env(safe-area-inset-left));
   }
 
   .map-board {
-    min-height: 94vh;
+    width: 100%;
+    height: calc(100vh - 16px);
+    height: calc(100dvh - 16px);
+    min-height: 0;
+    border-width: 7px;
+    border-radius: 14px;
   }
 
   .map-header {
+    left: 14px;
+    right: 14px;
+    top: 12px;
     width: auto;
-    right: 24px;
-    top: 20px;
-    padding: 14px 16px;
+    padding: 11px 13px;
   }
 
   .map-header h1 {
-    font-size: clamp(24px, 7vw, 34px);
+    font-size: clamp(24px, 7vw, 32px);
     line-height: 1;
   }
 
   .map-card {
-    left: 18px;
-    right: 18px;
+    left: 12px;
+    right: 12px;
     top: auto;
-    bottom: 64px;
+    bottom: 56px;
     width: auto;
-    max-height: 28vh;
+    max-height: min(23vh, 170px);
     overflow: auto;
-    padding: 14px 16px;
+    padding: 12px 14px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .map-card h2 {
+    margin-bottom: 6px;
+    font-size: clamp(22px, 6vw, 28px);
+  }
+
+  .map-card p:not(.small-label) {
+    margin-bottom: 10px;
+    font-size: 14px;
+    line-height: 1.32;
+  }
+
+  .map-card .primary-button {
+    min-height: 40px;
+    padding: 9px 16px;
   }
 
   .gallery-section {
-    left: 18px;
-    right: 18px;
-    top: clamp(116px, 20vh, 146px);
+    left: 12px;
+    right: 12px;
+    top: clamp(104px, 17vh, 132px);
     bottom: auto;
     width: auto;
-    padding: 10px;
+    padding: 9px;
   }
 
   .gallery-header {
@@ -1189,7 +1264,7 @@ h1 {
   }
 
   .gallery-items {
-    min-height: 78px;
+    min-height: 72px;
     gap: 8px;
   }
 
@@ -1203,46 +1278,91 @@ h1 {
     font-size: 9px;
   }
 
+  .gallery-empty {
+    font-size: 13px;
+  }
+
   .map-path {
-    left: 4%;
-    right: 4%;
-    top: 35%;
-    bottom: clamp(240px, 38vh, 310px);
+    left: 3%;
+    right: 3%;
+    top: clamp(226px, 31vh, 268px);
+    bottom: clamp(216px, 31vh, 266px);
+  }
+
+  .map-route path {
+    stroke-width: 6;
+    stroke-dasharray: 1 16;
   }
 
   .map-node {
-    width: clamp(68px, 19vw, 82px);
-    height: clamp(68px, 19vw, 82px);
+    width: clamp(60px, 18vw, 76px);
+    height: clamp(60px, 18vw, 76px);
+    box-shadow: 0 6px 0 #a9632d, 0 13px 22px rgba(75, 42, 23, 0.22);
+  }
+
+  .node-number {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+
+  .node-title {
+    font-size: 12px;
   }
 
   .level-one {
-    left: 2%;
-    top: 16%;
+    left: 1%;
+    top: 12%;
   }
 
   .level-two {
-    left: 38%;
-    top: 2%;
+    left: 37%;
+    top: 0;
   }
 
   .level-three {
-    left: 48%;
-    top: 58%;
+    left: 50%;
+    top: 57%;
   }
 
   .chest-node {
-    right: 1%;
-    bottom: 2%;
-    width: clamp(94px, 26vw, 118px);
-    height: clamp(76px, 20vw, 94px);
+    right: 0;
+    bottom: 0;
+    width: clamp(84px, 24vw, 110px);
+    height: clamp(68px, 19vw, 88px);
+  }
+
+  .chest-lock {
+    width: 22px;
+    height: 30px;
+  }
+
+  .close-book {
+    right: 12px;
+    bottom: 12px;
+    padding: 9px 13px;
+    font-size: 14px;
+  }
+
+  .level-screen {
+    padding:
+      max(8px, env(safe-area-inset-top))
+      max(8px, env(safe-area-inset-right))
+      max(8px, env(safe-area-inset-bottom))
+      max(8px, env(safe-area-inset-left));
   }
 
   .level-shell {
-    height: 96vh;
+    width: 100%;
+    height: calc(100vh - 16px);
+    height: calc(100dvh - 16px);
+    gap: 8px;
   }
 
   .level-header {
     grid-template-columns: 1fr auto;
+    gap: 8px 10px;
+    padding: 9px;
   }
 
   .level-header > div:not(.level-actions) {
@@ -1250,14 +1370,109 @@ h1 {
     order: -1;
   }
 
+  .level-header .small-label {
+    margin-bottom: 3px;
+    font-size: 10px;
+  }
+
+  .level-header h2 {
+    font-size: clamp(22px, 6vw, 30px);
+  }
+
+  .level-status {
+    padding: 8px 10px;
+    font-size: 13px;
+    text-align: center;
+  }
+
+  .quiet-button,
+  .close-book {
+    min-height: 40px;
+  }
+
+  .game-area {
+    border-radius: 10px;
+  }
+
+  .hud {
+    left: 8px;
+    right: 8px;
+    top: 8px;
+    gap: 6px;
+  }
+
+  .hud-pill {
+    padding: 7px 9px;
+    font-size: 12px;
+  }
+
+  .runner-player {
+    left: 24%;
+    width: clamp(118px, 39vw, 188px);
+  }
+
+  .runner-chaser {
+    left: 2%;
+    width: clamp(110px, 36vw, 172px);
+  }
+
+  .runner-obstacle {
+    width: clamp(58px, 17vw, 82px);
+  }
+
   .holes {
-    inset: 96px 5% 28px;
+    inset: 72px 4% 22px;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px 18px;
+    gap: 8px 12px;
   }
 
   .hole {
-    min-height: 150px;
+    min-height: clamp(96px, 20vh, 142px);
+  }
+
+  .popup-character {
+    width: clamp(98px, 34vw, 162px);
+    max-height: 170px;
+  }
+
+  .hole.is-penalty .popup-character {
+    width: clamp(90px, 31vw, 148px);
+  }
+
+  .dodge-player {
+    width: clamp(86px, 28vw, 126px);
+  }
+
+  .hazard {
+    width: clamp(52px, 15vw, 74px);
+  }
+
+  .overlay {
+    padding:
+      max(12px, env(safe-area-inset-top))
+      max(12px, env(safe-area-inset-right))
+      max(12px, env(safe-area-inset-bottom))
+      max(12px, env(safe-area-inset-left));
+  }
+
+  .reward-card,
+  .lock-card {
+    width: min(520px, 96vw);
+    max-height: calc(100vh - 24px);
+    max-height: calc(100dvh - 24px);
+    overflow: auto;
+    padding: 20px;
+  }
+
+  .reward-image {
+    width: min(300px, 72vw);
+    max-height: 34vh;
+  }
+
+  .reward-card h2,
+  .lock-card h2,
+  .ending-letter h2 {
+    font-size: clamp(28px, 8vw, 38px);
   }
 
   .lock-form {
@@ -1271,12 +1486,212 @@ h1 {
 
   .ending-card {
     grid-template-columns: 1fr;
-    max-height: 92vh;
+    width: 96vw;
+    max-height: calc(100vh - 24px);
+    max-height: calc(100dvh - 24px);
     overflow: auto;
+    gap: 18px;
+    padding: 18px;
+    -webkit-overflow-scrolling: touch;
   }
 
   .ending-photo {
-    max-height: 38vh;
+    max-height: 34vh;
+    border-width: 9px;
+    border-bottom-width: 30px;
+  }
+
+  .ending-letter {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 420px) {
+  .small-label {
+    letter-spacing: 0.1em;
+  }
+
+  .map-header h1 {
+    font-size: clamp(22px, 7vw, 29px);
+  }
+
+  .gallery-header {
+    align-items: flex-start;
+  }
+
+  .map-path {
+    top: clamp(216px, 32vh, 252px);
+    bottom: clamp(204px, 30vh, 246px);
+  }
+
+  .level-two {
+    left: 34%;
+  }
+
+  .level-three {
+    left: 47%;
+  }
+}
+
+@media (max-height: 620px) and (max-width: 760px) {
+  .map-header {
+    top: 8px;
+    padding: 9px 11px;
+  }
+
+  .map-header h1 {
+    font-size: clamp(21px, 6vw, 27px);
+  }
+
+  .gallery-section {
+    top: 86px;
+  }
+
+  .gallery-items {
+    min-height: 60px;
+  }
+
+  .gallery-polaroid {
+    flex-basis: 56px;
+  }
+
+  .gallery-caption,
+  .gallery-count {
+    font-size: 9px;
+  }
+
+  .map-path {
+    top: 188px;
+    bottom: 172px;
+  }
+
+  .map-card {
+    bottom: 48px;
+    max-height: 132px;
+    padding: 10px 12px;
+  }
+
+  .map-card p:not(.small-label) {
+    display: none;
+  }
+
+  .map-node {
+    width: 58px;
+    height: 58px;
+  }
+
+  .chest-node {
+    width: 82px;
+    height: 64px;
+  }
+
+  .level-header {
+    grid-template-columns: 1fr auto auto;
+    padding: 7px;
+  }
+
+  .level-header > div:not(.level-actions) {
+    grid-column: auto;
+    order: 0;
+  }
+
+  .level-header .small-label {
+    display: none;
+  }
+
+  .level-header h2 {
+    font-size: clamp(19px, 5vw, 25px);
+  }
+
+  .quiet-button {
+    min-height: 36px;
+    padding: 8px 11px;
+  }
+
+  .holes {
+    inset: 58px 4% 16px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .hole {
+    min-height: 92px;
+  }
+
+  .popup-character {
+    width: clamp(82px, 22vw, 120px);
+  }
+}
+
+@media (orientation: landscape) and (max-height: 520px) {
+  .map-screen,
+  .level-screen {
+    padding: max(6px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right)) max(6px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+  }
+
+  .map-board,
+  .level-shell {
+    height: calc(100vh - 12px);
+    height: calc(100dvh - 12px);
+    min-height: 0;
+  }
+
+  .map-board {
+    width: 100%;
+    border-width: 7px;
+  }
+
+  .map-header {
+    left: 16px;
+    right: auto;
+    top: 16px;
+    width: min(290px, 35vw);
+    padding: 12px 14px;
+  }
+
+  .map-header h1 {
+    font-size: clamp(28px, 4.4vw, 40px);
+  }
+
+  .gallery-section {
+    left: 16px;
+    top: auto;
+    bottom: 16px;
+    width: min(290px, 35vw);
+    padding: 8px 10px;
+  }
+
+  .gallery-items {
+    min-height: 58px;
+  }
+
+  .map-card {
+    left: auto;
+    right: 16px;
+    top: 16px;
+    bottom: auto;
+    width: min(286px, 34vw);
+    max-height: calc(100% - 72px);
+    padding: 16px;
+  }
+
+  .map-card h2 {
+    font-size: clamp(24px, 3vw, 32px);
+  }
+
+  .map-card p:not(.small-label) {
+    font-size: 14px;
+  }
+
+  .map-path {
+    left: 36%;
+    right: 2%;
+    top: 38%;
+    bottom: 12%;
+  }
+
+  .close-book {
+    right: 10px;
+    bottom: 10px;
   }
 }
 
