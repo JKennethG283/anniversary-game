@@ -1157,6 +1157,43 @@ galleryItems.addEventListener("click", (event) => {
   }
 });
 
+const lightbox = document.getElementById("lightbox");
+const lightboxImage = document.getElementById("lightboxImage");
+const lightboxClose = document.getElementById("lightboxClose");
+
+function openLightbox(src, alt) {
+  if (!lightbox || !lightboxImage) return;
+  lightboxImage.src = src;
+  lightboxImage.alt = alt || "";
+  lightbox.classList.add("is-open");
+  lightbox.setAttribute("aria-hidden", "false");
+}
+
+function closeLightbox() {
+  if (!lightbox) return;
+  lightbox.classList.remove("is-open");
+  lightbox.setAttribute("aria-hidden", "true");
+}
+
+if (rewardImage) {
+  rewardImage.addEventListener("click", () => {
+    if (!rewardImage.src || rewardImage.hidden) return;
+    openLightbox(rewardImage.src, rewardImage.alt);
+  });
+}
+
+if (lightbox) {
+  lightboxClose?.addEventListener("click", closeLightbox);
+  lightbox.addEventListener("click", (event) => {
+    if (event.target === lightbox) closeLightbox();
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && lightbox.classList.contains("is-open")) {
+      closeLightbox();
+    }
+  });
+}
+
 rewardContinue.addEventListener("click", () => {
   if (rewardAction) rewardAction();
 });
