@@ -1320,6 +1320,8 @@ h1 {
 
   .map-board.is-gallery-open.has-gallery-items .gallery-section {
     display: block;
+    width: fit-content;
+    max-width: calc(100% - 24px);
     max-height: min(34vh, 220px);
     height: fit-content;
     padding: 9px 12px 8px;
@@ -1784,6 +1786,8 @@ h1 {
 
   .map-board.is-gallery-open.has-gallery-items .gallery-section {
     display: block;
+    width: fit-content;
+    max-width: calc(100% - 20px);
     max-height: min(42vh, 180px);
     height: fit-content;
     padding: 8px 10px;
@@ -1894,6 +1898,75 @@ h1 {
 
   .hole.is-penalty .popup-character {
     width: clamp(60px, 15vw, 97px);
+  }
+
+  .level-header {
+    grid-template-columns: 1fr auto auto;
+    gap: 6px 8px;
+    padding: 6px 9px;
+  }
+
+  .level-header > div:not(.level-actions) {
+    grid-column: auto;
+    order: 0;
+  }
+
+  .level-header .small-label {
+    display: none;
+  }
+
+  .level-header h2 {
+    font-size: clamp(17px, 4.2vw, 24px);
+  }
+
+  .level-status {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .quiet-button,
+  .close-book {
+    min-height: 34px;
+    padding: 7px 11px;
+  }
+
+  .hud {
+    left: 8px;
+    right: 8px;
+    top: 8px;
+    gap: 6px;
+  }
+
+  .hud-pill {
+    padding: 6px 9px;
+    font-size: 11px;
+  }
+
+  .runner-player {
+    left: 22%;
+    bottom: 14%;
+    width: clamp(96px, 22vw, 152px);
+    max-height: 72%;
+  }
+
+  .runner-chaser {
+    left: 3%;
+    bottom: 14%;
+    width: clamp(88px, 20vw, 140px);
+    max-height: 66%;
+  }
+
+  .runner-obstacle {
+    bottom: 14%;
+    width: clamp(46px, 10vw, 70px);
+  }
+
+  .dodge-player {
+    width: clamp(80px, 13vw, 132px);
+  }
+
+  .hazard {
+    width: clamp(44px, 9vw, 66px);
   }
 
   .reward-card,
