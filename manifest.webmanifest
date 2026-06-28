@@ -1,0 +1,20 @@
+{
+  "name": "Janice's Anniversary Treasure Book",
+  "short_name": "Treasure Book",
+  "description": "An anniversary treasure book with three memory mini-games.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "fullscreen",
+  "display_override": ["fullscreen", "standalone"],
+  "orientation": "any",
+  "background_color": "#201720",
+  "theme_color": "#201720",
+  "icons": [
+    {
+      "src": "assets/images/level-1-polaroid.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

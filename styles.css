@@ -12,6 +12,7 @@
   --night: #201720;
   --shadow: 0 28px 80px rgba(31, 16, 12, 0.36);
   --focus: 0 0 0 4px rgba(242, 183, 67, 0.42);
+  --app-height: 100dvh;
   font-family: "Trebuchet MS", "Segoe UI", sans-serif;
 }
 
@@ -27,7 +28,11 @@ body {
 
 body {
   margin: 0;
+  height: var(--app-height);
   overflow: hidden;
+  position: fixed;
+  inset: 0;
+  overscroll-behavior: none;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   color: var(--ink);
@@ -56,7 +61,7 @@ button {
 
 .app {
   min-height: 100vh;
-  min-height: 100dvh;
+  min-height: var(--app-height);
   position: relative;
   isolation: isolate;
 }
@@ -80,7 +85,7 @@ button {
   display: grid;
   place-items: center;
   min-height: 100vh;
-  min-height: 100dvh;
+  min-height: var(--app-height);
   background: #0d0a0d url("assets/images/cover-frame.jpg") center / cover no-repeat;
 }
 
@@ -178,7 +183,7 @@ button {
   position: relative;
   width: min(1120px, 96vw);
   height: min(760px, calc(100vh - 28px));
-  height: min(760px, calc(100dvh - 28px));
+  height: min(760px, calc(var(--app-height) - 28px));
   min-height: 560px;
   overflow: hidden;
   border-radius: 18px;
@@ -721,7 +726,7 @@ h1 {
 .level-shell {
   width: min(1180px, 98vw);
   height: min(780px, calc(100vh - 24px));
-  height: min(780px, calc(100dvh - 24px));
+  height: min(780px, calc(var(--app-height) - 24px));
   min-height: 0;
   display: grid;
   grid-template-rows: auto 1fr;
@@ -1221,7 +1226,7 @@ h1 {
   .map-board {
     width: 100%;
     height: calc(100vh - 16px);
-    height: calc(100dvh - 16px);
+    height: calc(var(--app-height) - 16px);
     min-height: 0;
     border-width: 7px;
     border-radius: 14px;
@@ -1431,7 +1436,7 @@ h1 {
   .level-shell {
     width: 100%;
     height: calc(100vh - 16px);
-    height: calc(100dvh - 16px);
+    height: calc(var(--app-height) - 16px);
     gap: 8px;
   }
 
@@ -1733,7 +1738,7 @@ h1 {
   .map-board,
   .level-shell {
     height: calc(100vh - 12px);
-    height: calc(100dvh - 12px);
+    height: calc(var(--app-height) - 12px);
     min-height: 0;
   }
 

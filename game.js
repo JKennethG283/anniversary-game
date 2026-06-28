@@ -1186,6 +1186,45 @@ codeInput.addEventListener("input", () => {
   codeInput.value = codeInput.value.replace(/\D/g, "").slice(0, 4);
 });
 
+function updateAppHeight() {
+  const height = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+  document.documentElement.style.setProperty("--app-height", `${height}px`);
+}
+
+updateAppHeight();
+window.addEventListener("resize", updateAppHeight);
+window.addEventListener("orientationchange", () => {
+  updateAppHeight();
+  setTimeout(updateAppHeight, 300);
+});
+if (window.visualViewport) {
+  window.visualViewport.addEventListener("resize", updateAppHeight);
+  window.visualViewport.addEventListener("scroll", updateAppHeight);
+}
+
+function requestAppFullscreen() {
+  const target = document.documentElement;
+  const request =
+    target.requestFullscreen ||
+    target.webkitRequestFullscreen ||
+    target.webkitRequestFullScreen;
+  if (request) {
+    try {
+      const result = request.call(target);
+      if (result && typeof result.catch === "function") result.catch(() => {});
+    } catch (error) {
+      /* fullscreen not allowed; the dynamic height fix still applies */
+    }
+  }
+}
+
+function enterFullscreenOnce() {
+  requestAppFullscreen();
+  window.removeEventListener("pointerdown", enterFullscreenOnce);
+}
+
+window.addEventListener("pointerdown", enterFullscreenOnce, { once: true });
+
 window.addEventListener("resize", () => {
   if (!isMobileMapLayout() && mapBoard?.classList.contains("is-gallery-open")) {
     setGalleryOpen(false);
